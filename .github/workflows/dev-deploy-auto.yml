@@ -1,0 +1,76 @@
+name: "DEV: Deploy"
+on:
+  push:
+    paths-ignore:
+      - ".env.example"
+      - "node_modules/**/*"
+      - ".next/**/*"
+      - "**/*.env"
+      - "**/package.json"
+      - "**/*.log"
+      - "coverage/**/*"
+      - "dist/**/*"
+      - "**/*.DS_Store"
+      - "tmp/**/*"
+      - "temp/**/*"
+      - ".cache/**/*"
+      - "**/*.tar.gz"
+      - ".vscode/**/*"
+      - "**/*.swp"
+      - "**/*~"
+      - "**/*.lock"
+      - "**/*.md"
+      - "**/*.mdx"
+    branches: ["dev"]
+
+jobs:
+  build:
+    name: Build & push docker image
+    environment: dev
+    runs-on: ubuntu-latest
+    env:
+      TAG: "dev"
+      REGISTRY: "ghcr.io"
+      REPOSITORY_OWNER: "${{ github.repository_owner }}"
+      IMG_NAME: "site"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create and pass GITHUB_DATETIME to ENV
+        run: echo "GITHUB_DATETIME=$(date '+%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
+
+      - name: Docker metadata
+        id: metadata
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.REPOSITORY_OWNER }}/${{ env.IMG_NAME }}
+          tags: |
+            type=raw,value=${{ env.TAG }}
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY}}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.metadata.outputs.tags }}
+          labels: ${{ steps.metadata.outputs.labels }}
+          build-args: |
+            GITHUB_SHA=${{ github.sha }}
+            GITHUB_DATETIME=${{ env.GITHUB_DATETIME }}
+            DATABASE_URI=${{ secrets.DATABASE_URI }}
+            PAYLOAD_SECRET=${{ secrets.PAYLOAD_SECRET }}
+            CRON_SECRET=${{ secrets.CRON_SECRET }}
+            PREVIEW_SECRET=${{ secrets.PREVIEW_SECRET }}
+            NEXT_PUBLIC_SERVER_URL=${{ secrets.NEXT_PUBLIC_SERVER_URL }}
+            S3_BUCKET=${{ secrets.S3_BUCKET }}
+            S3_ENDPOINT=${{ secrets.S3_ENDPOINT }}
+            S3_ACCESS_KEY=${{ secrets.S3_ACCESS_KEY}}
+            S3_SECRET_KEY=${{ secrets.S3_SECRET_KEY }}
