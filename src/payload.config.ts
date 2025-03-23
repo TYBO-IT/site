@@ -1,10 +1,11 @@
-// storage-adapter-import-placeholder
 import { postgresAdapter } from "@payloadcms/db-postgres";
-
-import sharp from "sharp"; // sharp-import
 import path from "path";
 import { buildConfig, PayloadRequest } from "payload";
+import sharp from "sharp"; // sharp-import
 import { fileURLToPath } from "url";
+
+import { defaultLexical } from "@/fields/defaultLexical";
+import { storageAdapter } from "@/storage/storage-adapter";
 
 import { Categories } from "./collections/Categories";
 import { Media } from "./collections/Media";
@@ -14,7 +15,6 @@ import { Users } from "./collections/Users";
 import { Footer } from "./Footer/config";
 import { Header } from "./Header/config";
 import { plugins } from "./plugins";
-import { defaultLexical } from "@/fields/defaultLexical";
 import { getServerSideURL } from "./utilities/getURL";
 
 const filename = fileURLToPath(import.meta.url);
@@ -28,49 +28,43 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
-    user: Users.slug,
     livePreview: {
       breakpoints: [
         {
+          height: 667,
           label: "Mobile",
           name: "mobile",
           width: 375,
-          height: 667,
         },
         {
+          height: 1024,
           label: "Tablet",
           name: "tablet",
           width: 768,
-          height: 1024,
         },
         {
+          height: 900,
           label: "Desktop",
           name: "desktop",
           width: 1440,
-          height: 900,
         },
       ],
     },
+    user: Users.slug,
   },
-  // This config helps us configure global or default features that the other editors can inherit
-  editor: defaultLexical,
+
+  collections: [Pages, Posts, Media, Categories, Users],
+
+  cors: [getServerSideURL()].filter(Boolean),
+
   db: postgresAdapter({
     pool: {
       connectionString: process.env.DATABASE_URI || "",
     },
   }),
-  collections: [Pages, Posts, Media, Categories, Users],
-  cors: [getServerSideURL()].filter(Boolean),
+  // This config helps us configure global or default features that the other editors can inherit
+  editor: defaultLexical,
   globals: [Header, Footer],
-  plugins: [
-    ...plugins,
-    // storage-adapter-placeholder
-  ],
-  secret: process.env.PAYLOAD_SECRET,
-  sharp,
-  typescript: {
-    outputFile: path.resolve(dirname, "payload-types.ts"),
-  },
   jobs: {
     access: {
       run: ({ req }: { req: PayloadRequest }): boolean => {
@@ -86,5 +80,11 @@ export default buildConfig({
       },
     },
     tasks: [],
+  },
+  plugins: [...plugins, storageAdapter],
+  secret: process.env.PAYLOAD_SECRET,
+  sharp,
+  typescript: {
+    outputFile: path.resolve(dirname, "payload-types.ts"),
   },
 });
