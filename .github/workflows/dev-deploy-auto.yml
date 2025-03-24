@@ -32,7 +32,7 @@ jobs:
       TAG: "dev"
       REGISTRY: "ghcr.io"
       REPOSITORY_OWNER: "${{ github.repository_owner }}"
-      IMG_NAME: "site"
+      IMG_NAME: "${{ vars.IMG_NAME }}"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
