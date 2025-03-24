@@ -1,13 +1,13 @@
-import type { TextFieldSingleValidation } from "payload";
 import {
   BoldFeature,
   ItalicFeature,
-  LinkFeature,
-  ParagraphFeature,
   lexicalEditor,
-  UnderlineFeature,
+  LinkFeature,
   type LinkFields,
+  ParagraphFeature,
+  UnderlineFeature,
 } from "@payloadcms/richtext-lexical";
+import type { TextFieldSingleValidation } from "payload";
 
 export const defaultLexical = lexicalEditor({
   features: [
@@ -26,13 +26,13 @@ export const defaultLexical = lexicalEditor({
         return [
           ...defaultFieldsWithoutUrl,
           {
-            name: "url",
-            type: "text",
             admin: {
               condition: (_data, siblingData) => siblingData?.linkType !== "internal",
             },
             label: ({ t }) => t("fields:enterURL"),
+            name: "url",
             required: true,
+            type: "text",
             validate: ((value, options) => {
               if ((options?.siblingData as LinkFields)?.linkType === "internal") {
                 return true; // no validation needed, as no url should exist for internal links

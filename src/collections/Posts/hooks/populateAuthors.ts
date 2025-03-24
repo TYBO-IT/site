@@ -12,9 +12,9 @@ export const populateAuthors: CollectionAfterReadHook = async ({ doc, req, req: 
     for (const author of doc.authors) {
       try {
         const authorDoc = await payload.findByID({
-          id: typeof author === "object" ? author?.id : author,
           collection: "users",
           depth: 0,
+          id: typeof author === "object" ? author?.id : author,
         });
 
         if (authorDoc) {

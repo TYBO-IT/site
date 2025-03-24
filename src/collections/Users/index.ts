@@ -3,7 +3,6 @@ import type { CollectionConfig } from "payload";
 import { authenticated } from "../../access/authenticated";
 
 export const Users: CollectionConfig = {
-  slug: "users",
   access: {
     admin: authenticated,
     create: authenticated,
@@ -22,5 +21,6 @@ export const Users: CollectionConfig = {
       type: "text",
     },
   ],
+  slug: "users",
   timestamps: true,
 };
