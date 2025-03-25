@@ -16,7 +16,8 @@
     "lint:fix": "cross-env NODE_OPTIONS=--no-deprecation next lint --fix",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "reinstall": "cross-env NODE_OPTIONS=--no-deprecation rm -rf node_modules && rm pnpm-lock.yaml && pnpm --ignore-workspace install",
-    "start": "cross-env NODE_OPTIONS=--no-deprecation next start"
+    "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
+    "prepare": "husky"
   },
   "dependencies": {
     "@payloadcms/admin-bar": "3.27.0",
@@ -83,6 +84,15 @@
   "pnpm": {
     "onlyBuiltDependencies": [
       "sharp"
+    ]
+  },
+  "lint-staged": {
+    "**/*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "**/*.{json,yaml,yml,md,css,scss,html}": [
+      "prettier --write"
     ]
   }
 }
