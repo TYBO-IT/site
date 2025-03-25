@@ -10,6 +10,15 @@ export const Header: GlobalConfig = {
   },
   fields: [
     {
+      name: "logo",
+      type: "upload",
+      relationTo: "media",
+      label: "Logo",
+      admin: {
+        description: "Upload your site logo. Recommended size: 193x34px",
+      },
+    },
+    {
       admin: {
         components: {
           RowLabel: "@/Header/RowLabel#RowLabel",
