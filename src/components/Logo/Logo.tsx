@@ -1,6 +1,7 @@
+import React from "react";
+
 import { Media } from "@/payload-types";
 import { cn } from "@/utilities/ui";
-import React from "react";
 
 interface Props {
   className?: string;

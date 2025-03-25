@@ -1,7 +1,6 @@
 import type { GlobalConfig } from "payload";
 
 import { link } from "@/fields/link";
-import { media } from "@/fields/media";
 
 import { revalidateFooter } from "./hooks/revalidateFooter";
 
@@ -11,13 +10,13 @@ export const Footer: GlobalConfig = {
   },
   fields: [
     {
-      name: "logo",
-      type: "upload",
-      relationTo: "media",
-      label: "Footer Logo",
       admin: {
-        description: "Upload your footer logo. Recommended size: 193x34px"
-      }
+        description: "Upload your footer logo. Recommended size: 193x34px",
+      },
+      label: "Footer Logo",
+      name: "logo",
+      relationTo: "media",
+      type: "upload",
     },
     {
       admin: {
